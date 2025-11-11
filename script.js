@@ -1,6 +1,3 @@
-// script.js (полный, обновлённый)
-
-// index.html
 const aloitaBtn = document.getElementById("aloita-btn");
 if (aloitaBtn) {
     aloitaBtn.addEventListener("click", () => {
@@ -8,7 +5,6 @@ if (aloitaBtn) {
     });
 }
 
-// asetukset.html элементы
 const aloitaPeliBtn = document.getElementById("aloita-peli");
 const vastustajaRadios = document.getElementsByName("vastustaja");
 const noppaRadios = document.getElementsByName("noppa");
@@ -57,7 +53,6 @@ if (aloitaPeliBtn) {
     });
 }
 
-// peli.html элементы
 const nopatContainer = document.getElementById("nopat");
 const heittoBtn = document.getElementById("heitto-btn");
 const lopetaBtn = document.getElementById("lopeta-btn");
@@ -75,7 +70,6 @@ let pisteet = [];
 let vuoro = 0;
 let vuoroPiste = 0;
 
-// новая булева: был ли на последнем броске эффект "одна единица" (у игрока)
 let viimeinenHeittoSisaltoYksi = false;
 
 function alustaPelaajat() {
@@ -106,7 +100,6 @@ function luoNopat() {
 function paivitaNaytto() {
     vuorossa.textContent = `Vuoro: ${pelaajat[vuoro]}`;
     vuoroPisteet.textContent = `Vuoro pisteet: ${vuoroPiste}`;
-    // список игроков и подсветка текущего
     pelaajaListaDiv.innerHTML = "";
     for (let i = 0; i < pelaajat.length; i++) {
         const p = document.createElement("p");
@@ -116,32 +109,25 @@ function paivitaNaytto() {
         }
         pelaajaListaDiv.appendChild(p);
     }
-    // обновление состояния кнопок централизовано
     paivitaNapit();
 }
 
 function paivitaNapit() {
-    // Muuta asetuksia всегда доступна
     if (muutaBtn) muutaBtn.disabled = false;
 
     const onBottiVuoro = (vastustaja === "botti" && pelaajat[vuoro] === "Botti Daniel A.");
     if (onBottiVuoro) {
-        // во время хода бота игрок не может кликать heitto/lopeta
         if (heittoBtn) heittoBtn.disabled = true;
         if (lopetaBtn) lopetaBtn.disabled = true;
     } else {
-        // ход реального игрока
-        // Lopeta vuoro всегда доступна игроку (чтобы он мог закончить ход)
         if (lopetaBtn) lopetaBtn.disabled = false;
 
-        // Heitä noppa блокируется, если на последнем броске у игрока выпала единица
-        // (viimeinenHeittoSisaltoYksi хранит именно этот флаг)
         if (heittoBtn) heittoBtn.disabled = viimeinenHeittoSisaltoYksi;
     }
 }
 
 function heitaNopat() {
-    viimeinenHeittoSisaltoYksi = false; // сброс перед броском
+    viimeinenHeittoSisaltoYksi = false;
     const tulokset = [];
     let yksitellen = false;
 
@@ -151,7 +137,6 @@ function heitaNopat() {
         const noppaEl = nopatContainer.children[i];
         noppaEl.textContent = arvo;
 
-        // анимация: сброс/повтор добавления класса 'heita' для перезапуска
         noppaEl.classList.remove("heita");
         void noppaEl.offsetWidth;
         noppaEl.classList.add("heita");
@@ -160,16 +145,13 @@ function heitaNopat() {
     }
 
     if (nopanMaara === 2) {
-        // две единицы -> 25 очков
         if (tulokset[0] === 1 && tulokset[1] === 1) {
             vuoroPiste += 25;
             viimeinenHeittoSisaltoYksi = false;
         } else if (tulokset.includes(1) && !(tulokset[0] === 1 && tulokset[1] === 1)) {
-            // ровно одна единица -> сброс очков и блокировать Heitä
             vuoroPiste = 0;
             viimeinenHeittoSisaltoYksi = true;
         } else if (tulokset[0] === tulokset[1]) {
-            // дубль (не единицы) -> удвоенные очки (по условию: *4 от одного кубика; сохраним предыдущую логику)
             vuoroPiste += tulokset[0] * 4;
             viimeinenHeittoSisaltoYksi = false;
         } else {
@@ -190,26 +172,21 @@ function heitaNopat() {
 }
 
 function lopetaVuoro() {
-    // добавить очки и сброс флагов
     pisteet[vuoro] += vuoroPiste;
     vuoroPiste = 0;
     viimeinenHeittoSisaltoYksi = false;
 
-    // проверка победы
     if (pisteet[vuoro] >= 100) {
         alert(`${pelaajat[vuoro]} voitti pelin!`);
         window.location.href = "asetukset.html";
         return;
     }
 
-    // смена хода
     vuoro = (vuoro + 1) % pelaajat.length;
     paivitaNaytto();
 
-    // если следующий — бот, запускаем его ход
     const onBottiVuoro = (vastustaja === "botti" && pelaajat[vuoro] === "Botti Daniel A.");
     if (onBottiVuoro) {
-        // блокируем кнопки игрока (muuta остаётся доступна)
         if (heittoBtn) heittoBtn.disabled = true;
         if (lopetaBtn) lopetaBtn.disabled = true;
         setTimeout(botVuoro, 800);
@@ -218,13 +195,10 @@ function lopetaVuoro() {
 
 function botVuoro() {
     let botPisteet = 0;
-    const tavoite = 5 + Math.floor(Math.random() * 8); // 5..12
+    const tavoite = 5 + Math.floor(Math.random() * 8);
     function botHeitto() {
-        // если очередь сменилась (человек вмешался) — прервать
         if (pelaajat[vuoro] !== "Botti Daniel A.") return;
 
-        // симулируем задержку "мышления"
-        // делаем бросок (с анимацией)
         for (let i = 0; i < nopanMaara; i++) {
             const arvo = Math.floor(Math.random() * 6) + 1;
             const noppaEl = nopatContainer.children[i];
@@ -234,7 +208,6 @@ function botVuoro() {
             noppaEl.classList.add("heita");
         }
 
-        // оценка результата после небольшой паузы (чтобы анимация успела)
         setTimeout(() => {
             const tulokset = [];
             for (let i = 0; i < nopanMaara; i++) {
@@ -245,11 +218,9 @@ function botVuoro() {
                 if (tulokset[0] === 1 && tulokset[1] === 1) {
                     botPisteet += 25;
                 } else if (tulokset.includes(1) && !(tulokset[0] === 1 && tulokset[1] === 1)) {
-                    // одна единица — бот теряет очки и завершает ход
                     botPisteet = 0;
                     vuoroPiste = 0;
                     paivitaNaytto();
-                    // завершить ход бота
                     lopetaVuoro();
                     return;
                 } else if (tulokset[0] === tulokset[1]) {
@@ -272,13 +243,10 @@ function botVuoro() {
             vuoroPiste = botPisteet;
             paivitaNaytto();
 
-            // решаем: продолжать ли
             if (botPisteet >= tavoite) {
-                // бот завершает ход
                 lopetaVuoro();
                 return;
             } else {
-                // небольшой интервал перед следующим броском
                 setTimeout(botHeitto, 700);
             }
         }, 500);
@@ -286,7 +254,6 @@ function botVuoro() {
     botHeitto();
 }
 
-// навешиваем обработчики
 if (heittoBtn) heittoBtn.addEventListener("click", heitaNopat);
 if (lopetaBtn) lopetaBtn.addEventListener("click", lopetaVuoro);
 if (muutaBtn) muutaBtn.addEventListener("click", () => {
@@ -295,7 +262,6 @@ if (muutaBtn) muutaBtn.addEventListener("click", () => {
     }
 });
 
-// инициализация
 luoNopat();
 alustaPelaajat();
 paivitaNaytto();
