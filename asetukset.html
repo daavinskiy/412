@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Sikanoppapeli - Asetukset</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="centered-container">
+        <h1>Sikanoppapeli - Asetukset</h1>
+
+        <div class="asetukset">
+            <p>Valitse vastustaja:</p>
+            <label><input type="radio" name="vastustaja" value="ihmiset"> Ihmisten kanssa</label>
+            <label><input type="radio" name="vastustaja" value="botti"> Botti 1 vastaan 1</label>
+
+            <p>Valitse nopan määrä:</p>
+            <label><input type="radio" name="noppa" value="1"> 1 noppa</label>
+            <label><input type="radio" name="noppa" value="2"> 2 noppaa</label>
+
+            <p id="pelaajien-maara-label">Valitse pelaajien määrä (vain ihmisten kanssa):</p>
+            <input type="range" id="pelaajien-maara" min="2" max="6" value="2">
+            <span id="pelaajien-maara-naytto">2</span>
+
+            <button id="aloita-peli">Aloita peli</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
